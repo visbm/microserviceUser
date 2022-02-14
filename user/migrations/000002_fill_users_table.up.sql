@@ -6,7 +6,6 @@ INSERT INTO USERS (email, password, role, verified, first_name , surname, middle
 ('leha@mail.ru', 'password5', 'employee', true, 'Vladzimir','Sakhonchik','Alekseevish', 'male', '1998-02-11', 'Minsk Partizanskiy 124-1' ,'+375-29-111-22-33', 'PhotoURL...'),
 ('miha@mail.ru', 'password6', 'employee', true, 'Mikhail','Valevach','Dmitrievich', 'male', '1997-01-12', 'Minsk Pr. Dzerjinskogo 01-01' ,'+375-29-777-55-44', 'PhotoURL...');
 
-I
 INSERT INTO PET (name , type, weight, diseases, user_id) VALUES 
 ('Murzik','cat',5 ,'no dieses' ,1),
 ('Barbos','dog',5 ,'1 dieses' ,2),
@@ -18,7 +17,4 @@ INSERT INTO IMAGES (type, URL, ownerId) VALUES
 ('pet', 'volume\images\pets\cat3.jpg', 3),
 ('pet', 'volume\images\pets\dog1.jpg', 3),
 ('pet', 'volume\images\pets\dog2.jpg', 3),
-('pet', 'volume\images\pets\dog3.jpg', 3),
-('room', 'volume\images\rooms\room1.jpg', 1),
-('room', 'volume\images\rooms\room2.jpg', 2),
-('room', 'volume\images\rooms\room3.jpg', 3);
+('pet', 'volume\images\pets\dog3.jpg', 3);

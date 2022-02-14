@@ -1,42 +1,7 @@
 version: '3.9'
 
 services:
-    pgadmin:
-        container_name: pgadmin
-        image: dpage/pgadmin4
-        env_file:
-            - .env
-        environment:
-            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-        ports:
-            - "5050:80"
-        restart: unless-stopped
-        volumes:
-            - pgadmin:/root/.pgadmin
-        networks:
-            - new
-
-    user_service:
-        container_name: user_service
-        build:
-            dockerfile: dockerfile
-            context: ./user
-        ports:
-            - "4444:4444"
-        env_file:
-            - .env
-        environment:
-            - SERVER_HOST=${USER_SERVER_HOST}
-            - ENV=prod
-        tty: true
-        restart: on-failure
-        volumes:
-            - api:/user/
-        networks:
-            - new
-
-    user_psql_db:
+    userdatabase:
         container_name: userdb
         image: postgres:latest
         env_file:
@@ -57,6 +22,22 @@ services:
                 aliases:
                     - database
 
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        env_file:
+            - .env
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+        ports:
+            - "5050:80"
+        restart: unless-stopped
+        volumes:
+            - pgadmin:/root/.pgadmin
+        networks:
+            - new
+
     user_migrate:
         container_name: user_migrate
         image: migrate/migrate
@@ -74,10 +55,31 @@ services:
                 "up"
             ]
         links:
-            - user_psql_db
+            - userdatabase
         depends_on:
-            - user_psql_db
+            - userdatabase
 
+    user_service:
+        container_name: user_service
+        build:
+            dockerfile: dockerfile
+            context: ./user
+        ports:
+            - "4444:4444"
+        env_file:
+            - .env
+        environment:
+            - SERVER_HOST=0.0.0.0
+            - ENV=prod
+        tty: true
+        restart: on-failure
+        volumes:
+            - api:/user/
+        networks:
+            - new
+        depends_on:
+            - userdatabase
+            
 networks:
     new:
         driver: bridge
