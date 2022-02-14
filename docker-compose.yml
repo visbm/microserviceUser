@@ -1,0 +1,88 @@
+version: '3.9'
+
+services:
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        env_file:
+            - .env
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+        ports:
+            - "5050:80"
+        restart: unless-stopped
+        volumes:
+            - pgadmin:/root/.pgadmin
+        networks:
+            - new
+
+    user_service:
+        container_name: user_service
+        build:
+            dockerfile: dockerfile
+            context: ./user
+        ports:
+            - "4444:4444"
+        env_file:
+            - .env
+        environment:
+            - SERVER_HOST=${USER_SERVER_HOST}
+            - ENV=prod
+        tty: true
+        restart: on-failure
+        volumes:
+            - api:/user/
+        networks:
+            - new
+
+    user_psql_db:
+        container_name: userdb
+        image: postgres:latest
+        env_file:
+            - .env
+        environment:
+            - POSTGRES_USER=${USER_POSTGRES_USER}
+            - POSTGRES_PASSWORD=${USER_POSTGRES_PASSWORD}
+            - POSTGRES_DB=${USER_POSTGRES_DB}
+            - POSTGRES_HOST=${USER_POSTGRES_HOST}
+            - POSTGRES_SSLMODE=${USER_POSTGRES_SSLMODE}
+        ports:
+            - "8081:5432"
+        restart: always
+        volumes:
+            - database-data:/var/lib/postgresql/user/data/
+        networks:
+            new:
+                aliases:
+                    - database
+
+    user_migrate:
+        container_name: user_migrate
+        image: migrate/migrate
+        restart: on-failure
+        networks:
+            - new
+        volumes:
+            - ./user/migrations:/user/migrations
+        command:
+            [
+                "-path",
+                "user/migrations",
+                "-database",
+                "postgres://user:userpass@userdb:5432/userdb?sslmode=disable",
+                "up"
+            ]
+        links:
+            - user_psql_db
+        depends_on:
+            - user_psql_db
+
+networks:
+    new:
+        driver: bridge
+
+volumes:
+    api: null
+    database-data: null
+    pgadmin: null
