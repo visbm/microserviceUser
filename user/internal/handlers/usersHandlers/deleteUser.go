@@ -35,9 +35,9 @@ func DeleteUser(s *store.Store) httprouter.Handle {
 			s.Logger.Errorf("Can't delete user. Err msg:%v.", err)
 			return
 		}
-		s.Logger.Info("Delete pet with id = %d", id)
+		s.Logger.Info("Delete user with id = %d", id)
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response.Info{Messsage: fmt.Sprintf("Delete pet with id = %d", id)})
+		json.NewEncoder(w).Encode(response.Info{Messsage: fmt.Sprintf("Delete user with id = %d", id)})
 
 	}
 }

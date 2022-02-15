@@ -23,7 +23,7 @@ func UpdateUser(s *store.Store) httprouter.Handle {
 			return
 		}
 
-		id := req.UserID
+		//id := 
 		
 		err := s.Open()
 		if err != nil {
@@ -31,7 +31,7 @@ func UpdateUser(s *store.Store) httprouter.Handle {
 			s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		}
 
-		u, err := s.User().FindByID(id)
+		u, err := s.User().FindByID(req.UserID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			s.Logger.Errorf("Cant find user. Err msg:%v.", err)
