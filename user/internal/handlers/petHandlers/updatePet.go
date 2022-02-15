@@ -78,12 +78,12 @@ func UpdatePet(s *store.Store) httprouter.Handle {
 		err = s.Pet().Update(p)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
-			s.Logger.Errorf("Can't create user. Err msg:%v.", err)
+			s.Logger.Errorf("Can't update user. Err msg:%v.", err)
 			return
 		}
 
-		s.Logger.Info("Creat pet with id = %d", p.PetID)
+		s.Logger.Info("Update pet with id = %d", p.PetID)
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response.Info{Messsage: fmt.Sprintf("Creat pet with id = %d", p.PetID)})
+		json.NewEncoder(w).Encode(response.Info{Messsage: fmt.Sprintf("Update pet with id = %d", p.PetID)})
 	}
 }
