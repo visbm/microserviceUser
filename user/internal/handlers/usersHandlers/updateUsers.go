@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"user/domain/model"
-	"user/iternal/store"
+	"user/internal/store"
 	"user/pkg/response"
 
 	"github.com/julienschmidt/httprouter"
@@ -24,7 +24,7 @@ func UpdateUser(s *store.Store) httprouter.Handle {
 		}
 
 		id := req.UserID
-
+		
 		err := s.Open()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

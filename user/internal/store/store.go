@@ -69,3 +69,16 @@ func (s *Store) User() *UserRepository {
 
 	return s.UserRepository
 }
+
+// Pet ...
+func (s *Store) Pet() *PetRepository {
+	if s.PetRepository != nil {
+		return s.PetRepository
+	}
+
+	s.PetRepository = &PetRepository{
+		Store: s,
+	}
+
+	return s.PetRepository
+}
