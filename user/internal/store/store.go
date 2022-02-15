@@ -71,7 +71,7 @@ func (s *Store) User() *UserRepository {
 }
 
 // Pet ...
-func (s *Store) PEt() *PetRepository {
+func (s *Store) Pet() *PetRepository {
 	if s.PetRepository != nil {
 		return s.PetRepository
 	}

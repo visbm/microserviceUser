@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"user/domain/model"
-	"user/iternal/store"
+	"user/internal/store"
 	"user/pkg/response"
 
 	"github.com/julienschmidt/httprouter"
@@ -36,9 +36,11 @@ func NewUser(s *store.Store) httprouter.Handle {
 			Address:     req.Address,
 			Phone:       req.Phone,
 			Photo:       req.Photo,
-			Verified:    req.Verified,
+			Verified:    false,
 			DateOfBirth: req.DateOfBirth,
 		}
+
+	
 
 		err := s.Open()
 		if err != nil {
@@ -46,17 +48,17 @@ func NewUser(s *store.Store) httprouter.Handle {
 			s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		}
 
-		err = u.Validate()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			s.Logger.Errorf("Data is not valid. Err msg:%v.", err)
-			return
-		}
-
 		err = u.WithEncryptedPassword()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			s.Logger.Errorf("Bad request. Err msg:%v.", err)
+			return
+		}
+
+		err = u.Validate()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			s.Logger.Errorf("Data is not valid. Err msg:%v.", err)
 			return
 		}
 

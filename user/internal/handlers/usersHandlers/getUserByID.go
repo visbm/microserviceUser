@@ -2,7 +2,7 @@ package usershandlers
 
 import (
 	"encoding/json"
-	"user/iternal/store"
+	"user/internal/store"
 
 	"net/http"
 	"strconv"

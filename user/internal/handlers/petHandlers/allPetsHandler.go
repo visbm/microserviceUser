@@ -3,7 +3,7 @@ package pethandlers
 import (
 	"encoding/json"
 	"net/http"
-	"user/iternal/store"
+	"user/internal/store"
 
 	"github.com/julienschmidt/httprouter"
 )

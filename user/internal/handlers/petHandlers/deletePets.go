@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"user/iternal/store"
+	"user/internal/store"
 	"user/pkg/response"
 
 	"github.com/julienschmidt/httprouter"
@@ -16,7 +16,7 @@ import (
 func DeletePets(s *store.Store) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-		id, err := strconv.Atoi(r.FormValue("id"))
+		id, err := strconv.Atoi(ps.ByName("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			s.Logger.Errorf("Bad request. Err msg:%v. Requests body: %v", err, r.FormValue("id"))

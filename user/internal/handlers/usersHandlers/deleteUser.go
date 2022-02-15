@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"user/iternal/store"
+	"user/internal/store"
 	"user/pkg/response"
 
 	"github.com/julienschmidt/httprouter"
