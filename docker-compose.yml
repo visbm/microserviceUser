@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-    userdatabase:
+    userdb:
         container_name: userdb
         image: postgres:latest
         env_file:
@@ -17,6 +17,26 @@ services:
         restart: always
         volumes:
             - database-data:/var/lib/postgresql/user/data/
+        networks:
+            new:
+                aliases:
+                    - database
+    userdbtest:
+        container_name: userdbtest
+        image: postgres:latest
+        env_file:
+            - .env
+        environment:
+            - TEST_POSTGRES_USER=${TEST_USER_POSTGRES_USER}
+            - TEST_POSTGRES_PASSWORD=${TEST_USER_POSTGRES_PASSWORD}
+            - TEST_POSTGRES_DB=${TEST_USER_POSTGRES_DB}
+            - TEST_POSTGRES_HOST=${TEST_USER_POSTGRES_HOST}
+            - TEST_POSTGRES_SSLMODE=${TEST_USER_POSTGRES_SSLMODE}
+        ports:
+            - "3231:5432"
+        restart: unless-stopped
+        volumes:
+            - database-test:/var/lib/test-date/user/data/
         networks:
             new:
                 aliases:
@@ -55,9 +75,30 @@ services:
                 "up"
             ]
         links:
-            - userdatabase
+            - userdb
         depends_on:
-            - userdatabase
+            - userdb
+
+    test_migrate:
+        container_name: test_migrate
+        image: migrate/migrate
+        restart: on-failure
+        networks:
+            - new
+        volumes:
+            - ./user/migrations:/user/migrations
+        command:
+            [
+                "-path",
+                "user/migrations",
+                "-database",
+                "postgres://user:userpass@userdbtest:5432/testuserdatabase?sslmode=disable",
+                "up"
+            ]
+        links:
+            - userdbtest
+        depends_on:
+            - userdbtest
 
     user_service:
         container_name: user_service
@@ -78,8 +119,8 @@ services:
         networks:
             - new
         depends_on:
-            - userdatabase
-            
+            - userdb
+
 networks:
     new:
         driver: bridge
@@ -87,4 +128,5 @@ networks:
 volumes:
     api: null
     database-data: null
+    database-test: null
     pgadmin: null
