@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS PET
     name         CHARACTER VARYING(30) NOT NULL ,
     type         CHARACTER VARYING(30) NOT NULL ,
     weight       SMALLINT NOT NULL ,
-    diseases       TEXT,
+    diseases     TEXT,
     user_id      INTEGER REFERENCES USERS(id) ON DELETE CASCADE NOT NULL 
 );
 

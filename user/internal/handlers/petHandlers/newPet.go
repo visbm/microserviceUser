@@ -1,4 +1,4 @@
-package usershandlers
+package pethandlers
 
 import (
 	"encoding/json"
@@ -11,11 +11,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// update user ...
-func UpdateUser(s *store.Store) httprouter.Handle {
+//NewPet
+func NewPet(s *store.Store) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		w.Header().Set("Content-Type", "application/json")
 
-		req := &model.User{}
+		req := &model.PetDTO{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			s.Logger.Errorf("Eror during JSON request decoding. Request body: %v, Err msg: %w", r.Body, err)
@@ -29,70 +30,40 @@ func UpdateUser(s *store.Store) httprouter.Handle {
 			s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		}
 
-		u, err := s.User().FindByID(req.UserID)
+		fmt.Println(req.OwnerID)
+		user, err := s.User().FindByID(req.OwnerID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			s.Logger.Errorf("Cant find user. Err msg:%v.", err)
 			return
 		}
 
-		if req.Email != "" {
-			u.Email = req.Email
+		p := model.Pet{
+			PetID:       0,
+			Name:        req.Name,
+			Type:        model.PetType(req.Type),
+			Weight:      req.Weight,
+			Diseases:   req.Diseases,
+			Owner:       *user,
+			PetPhotoURL: req.PetPhotoURL,
 		}
 
-		if req.Role != "" {
-			u.Role = req.Role
-		}
-
-		if req.Name != "" {
-			u.Name = req.Name
-		}
-
-		if req.Surname != "" {
-			u.Surname = req.Surname
-		}
-
-		if req.MiddleName != "" {
-			u.MiddleName = req.MiddleName
-		}
-
-		if req.Sex != "" {
-			u.Sex = req.Sex
-		}
-
-		if !req.DateOfBirth.IsZero() {
-			u.DateOfBirth = req.DateOfBirth
-		}
-
-		if req.Address != "" {
-			u.Address = req.Address
-		}
-
-		if req.Phone != "" {
-			u.Phone = req.Phone
-		}
-
-		if req.Photo != "" {
-			u.Photo = req.Photo
-		}
-
-		err = u.Validate()
+		err = p.Validate()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			s.Logger.Errorf("Data is not valid. Err msg:%v.", err)
 			return
 		}
 
-		err = s.User().Update(u)
+		_, err = s.Pet().Create(&p)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
-			s.Logger.Errorf("Can't update user. Err msg:%v.", err)
+			s.Logger.Errorf("Can't create pet. Err msg:%v.", err)
 			return
 		}
 
-		s.Logger.Info("Update user with id = %d", u.UserID)
+		s.Logger.Info("Creat pet with id = %d", p.PetID)
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response.Info{Messsage: fmt.Sprintf("Update user with id = %d", u.UserID)})
-
+		json.NewEncoder(w).Encode(response.Info{Messsage: fmt.Sprintf("Creat pet with id = %d", p.PetID)})
 	}
 }
