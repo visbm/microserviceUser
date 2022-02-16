@@ -19,8 +19,7 @@ func DeletePets(s *store.Store) httprouter.Handle {
 		id, err := strconv.Atoi(ps.ByName("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			s.Logger.Errorf("Bad request. Err msg:%v. Requests body: %v", err, r.FormValue("id"))
-			http.Redirect(w, r, "/admin/homepets", http.StatusFound)
+			s.Logger.Errorf("Bad request. Err msg:%v. Requests body: %v", err, r.FormValue("id"))			
 			return
 		}
 		err = s.Open()
