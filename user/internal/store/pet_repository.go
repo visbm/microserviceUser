@@ -28,22 +28,22 @@ func (r *PetRepository) Create(p *model.Pet) (*model.Pet, error) {
 }
 
 // GetAll returns all pets
-func (r *PetRepository) GetAll() (*[]model.Pet, error) {
+func (r *PetRepository) GetAll() (*[]model.PetDTO, error) {
 	rows, err := r.Store.Db.Query("SELECT * FROM pet")
 	if err != nil {
 		log.Print(err)
 	}
-	pets := []model.Pet{}
+	pets := []model.PetDTO{}
 
 	for rows.Next() {
-		pet := model.Pet{}
+		pet := model.PetDTO{}
 		err := rows.Scan(
 			&pet.PetID,
 			&pet.Name,
 			&pet.Type,
 			&pet.Weight,
 			&pet.Diseases,
-			&pet.Owner.UserID,
+			&pet.OwnerID,
 		)
 		if err != nil {
 			log.Print(err)
@@ -54,8 +54,26 @@ func (r *PetRepository) GetAll() (*[]model.Pet, error) {
 	return &pets, nil
 }
 
+//FindByID searchs and returns petDTO by ID
+func (r *PetRepository) FindByID(id int) (*model.PetDTO, error) {
+	pet := &model.PetDTO{}
+	if err := r.Store.Db.QueryRow("SELECT * FROM pet WHERE id = $1",
+		id).Scan(
+		&pet.PetID,
+		&pet.Name,
+		&pet.Type,
+		&pet.Weight,
+		&pet.Diseases,
+		&pet.OwnerID,
+	); err != nil {
+		log.Printf(err.Error())
+		return nil, err
+	}
+	return pet, nil
+}
+
 //FindByID searchs and returns pet by ID
-func (r *PetRepository) FindByID(id int) (*model.Pet, error) {
+func (r *PetRepository) FindPetID(id int) (*model.Pet, error) {
 	pet := &model.Pet{}
 	if err := r.Store.Db.QueryRow("SELECT * FROM pet WHERE id = $1",
 		id).Scan(

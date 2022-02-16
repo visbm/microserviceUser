@@ -23,8 +23,6 @@ func UpdateUser(s *store.Store) httprouter.Handle {
 			return
 		}
 
-		//id := 
-		
 		err := s.Open()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -38,62 +36,44 @@ func UpdateUser(s *store.Store) httprouter.Handle {
 			return
 		}
 
-		email := req.Email
-		if email != "" {
-			u.Email = email
+		if req.Email != "" {
+			u.Email = req.Email
 		}
 
-		role := req.Role
-		if role != "" {
-			u.Role = model.Role(role)
+		if req.Role != "" {
+			u.Role = req.Role
 		}
 
-		name := req.Name
-		if name != "" {
-			u.Name = name
+		if req.Name != "" {
+			u.Name = req.Name
 		}
 
-		surname := req.Surname
-		if surname != "" {
-			u.Surname = surname
+		if req.Surname != "" {
+			u.Surname = req.Surname
 		}
 
-		middleName := req.MiddleName
-		if surname != "" {
-			u.MiddleName = middleName
+		if req.MiddleName != "" {
+			u.MiddleName = req.MiddleName
 		}
 
-		sex := req.Sex
-		if sex != "" {
-			u.Sex = model.Sex(sex)
+		if req.Sex != "" {
+			u.Sex = req.Sex
 		}
 
-		//TODO
-		/*layout := "2006-01-02"
-		dateOfBirth := req.DateOfBirth
-		if dateOfBirth != "" {
-			dateOfBirth, err := time.Parse(layout, r.FormValue("DateOfBirth"))
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				s.Logger.Errorf("Bad request. Err msg:%v. Requests body: %v", err, r.FormValue("DateOfBirth"))
-				return
-			}
-			u.DateOfBirth = dateOfBirth
-		}*/
-
-		address := req.Address
-		if address != "" {
-			u.Address = address
+		if !req.DateOfBirth.IsZero() {
+			u.DateOfBirth = req.DateOfBirth
 		}
 
-		phone := req.Phone
-		if phone != "" {
-			u.Phone = phone
+		if req.Address != "" {
+			u.Address = req.Address
 		}
 
-		photo := req.Photo
-		if photo != "" {
-			u.Photo = photo
+		if req.Phone != "" {
+			u.Phone = req.Phone
+		}
+
+		if req.Photo != "" {
+			u.Photo = req.Photo
 		}
 
 		err = u.Validate()

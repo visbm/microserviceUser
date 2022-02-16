@@ -30,17 +30,12 @@ func UpdatePet(s *store.Store) httprouter.Handle {
 			s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		}
 
-		user, err := s.User().FindByID(req.OwnerID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusNotFound)
-			s.Logger.Errorf("Cant find user. Err msg:%v.", err)
-			return
-		}
+		user, _ := s.User().FindByID(req.OwnerID)
 
-		p, err := s.Pet().FindByID(req.PetID)
+		p, err := s.Pet().FindPetID(req.PetID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
-			s.Logger.Errorf("Cant find user. Err msg:%v.", err)
+			s.Logger.Errorf("Cant find pet. Err msg:%v.", err)
 			return
 		}
 
@@ -60,8 +55,10 @@ func UpdatePet(s *store.Store) httprouter.Handle {
 			p.Diseases = req.Diseases
 		}
 
-		if user.UserID != req.OwnerID {
-			p.Owner = *user
+		if user != nil {
+			if user.UserID != req.OwnerID {
+				p.Owner = *user
+			}
 		}
 
 		if req.PetPhotoURL != "" {
