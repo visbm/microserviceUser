@@ -30,7 +30,6 @@ func NewPet(s *store.Store) httprouter.Handle {
 			s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		}
 
-		fmt.Println(req.OwnerID)
 		user, err := s.User().FindByID(req.OwnerID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -43,7 +42,7 @@ func NewPet(s *store.Store) httprouter.Handle {
 			Name:        req.Name,
 			Type:        model.PetType(req.Type),
 			Weight:      req.Weight,
-			Diseases:   req.Diseases,
+			Diseases:    req.Diseases,
 			Owner:       *user,
 			PetPhotoURL: req.PetPhotoURL,
 		}
