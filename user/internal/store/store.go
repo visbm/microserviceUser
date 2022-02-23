@@ -15,7 +15,7 @@ type Store struct {
 	Db             *sql.DB
 	Logger         *logging.Logger
 	UserRepository *UserRepository
-	PetRepository *PetRepository
+	PetRepository  *PetRepository
 }
 
 // New ...
@@ -40,10 +40,12 @@ func (s *Store) Open() error {
 
 	db, err := sql.Open("postgres", dataSourceName)
 	if err != nil {
+		s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		return err
 	}
 
 	if err := db.Ping(); err != nil {
+		s.Logger.Errorf("Can't open DB. Err msg:%v.", err)
 		return err
 	}
 
