@@ -154,6 +154,7 @@ func (r *UserRepository) Delete(id int) error {
 		r.Store.Logger.Errorf("Can't delete user. Err msg:%v.", err)
 		return err
 	}
+	r.Store.Logger.Info("User deleted, rows affectet: %d", result)
 	return nil
 }
 

@@ -2,7 +2,6 @@ package store
 
 import (
 	"errors"
-	"log"
 	"user/domain/model"
 )
 
@@ -110,7 +109,7 @@ func (r *PetRepository) Delete(id int) error {
 		r.Store.Logger.Errorf("Can't delete pet. Err msg:%v.", err)
 		return err
 	}
-	log.Printf("Pet deleted, rows affectet: %d", result)
+	r.Store.Logger.Info("Pet deleted, rows affectet: %d", result)
 	return nil
 }
 
